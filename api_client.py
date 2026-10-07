@@ -20,8 +20,8 @@ if __name__ == "__main__":
     puzzle = solve_puzzle()
     print(puzzle)
 
-if puzzle is not None:
-    print("Fish:", puzzle["fish"])
+    if puzzle is not None:
+        print("Fish:", puzzle["fish"])
     # Optional: Download the puzzle image to disk
     #img_response = requests.get(image_url)
     #if img_response.status_code == 200:
