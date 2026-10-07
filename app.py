@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 import api_client
 
 app = Flask(__name__)
@@ -13,11 +13,7 @@ def home():
 
     print("Answer (for testing):", puzzle["fish"], "fish,", puzzle["chest"], "chests")
 
-    return f"""
-    <h1>Fish Game</h1>
-    <p>Count the fish and the chests:</p>
-    <img src="{puzzle['image_url']}" width="500">
-    """
+    return render_template("index.html", image_url=puzzle["image_url"], score=0)
 
 
 if __name__ == "__main__":
