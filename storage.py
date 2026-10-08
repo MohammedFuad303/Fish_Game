@@ -21,7 +21,16 @@ def add_user(username, password_hash):
     finally:
         conn.close()
 
+def get_password_hash(username):
+    conn = sqlite3.connect(DB_FILE)
+    row = conn.execute("SELECT password_hash FROM users WHERE username = ?", (username,)).fetchone()
+    conn.close()
+    if row is None:
+        return None
+    return row[0]
+
+
 if __name__ == "__main__":
     create_tables()
-    
-    print(add_user("test4", "fakehash")) 
+    print(get_password_hash("test3"))
+    print(get_password_hash("nobody"))
