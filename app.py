@@ -33,10 +33,17 @@ def home():
 
 @app.route("/guess", methods=["POST"])
 def guess():
-    fish = int(request.form["fish"])
-    chest = int(request.form["chest"])
 
-    answer = games.get(session.get("game_id"))
+    try:
+        fish = int(request.form["fish"])
+        chest = int(request.form["chest"])
+    except ValueError:
+        return "Please return whole numbers for both fish and chests. <a href='/'>Back to the game</a>"
+
+    answer = games.pop(session.get("game_id"), None)
+
+    if answer is None:
+        return "Game session expired or invalid. <a href='/'>Start a new game</a>"
 
     session["rounds"] = session.get("rounds", 0) + 1
 
