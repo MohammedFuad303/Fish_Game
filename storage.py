@@ -7,8 +7,8 @@ def create_tables():
     conn = sqlite3.connect(DB_FILE)
     conn.execute("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password_hash TEXT NOT NULL)")
     conn.execute("CREATE TABLE IF NOT EXISTS scores (username TEXT PRIMARY KEY, score INTEGER NOT NULL, rounds INTEGER NOT NULL)") #username primary key, so each player has exactly one row
-    conn.commit()
-    conn.close()
+    conn.commit() #saves to disk
+    conn.close() #closes the file
 
 
 def add_user(username, password_hash):
@@ -31,7 +31,17 @@ def get_password_hash(username):
     return row[0]
 
 
+def save_score(username, score, rounds):
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute("INSERT or REPLACE INTO scores VALUES (?, ?, ?)",(username, score, rounds))
+    conn.commit()
+    conn.close()
+# INSERT OR REPLACE adds a new row, or overwrites the existing one if that username alrewady has a row
+# The three placehoulders ? are filled with (username, score, rounds), in the same order as the columns in the table
+  
+
+
 if __name__ == "__main__":
     create_tables()
-    print(get_password_hash("test3"))
-    print(get_password_hash("nobody"))
+    save_score("fuad2",3, 5)
+    print("Score saved")
