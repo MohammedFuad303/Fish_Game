@@ -94,5 +94,10 @@ def login():
             message = "Wrong username or password"
     return render_template("login.html", message=message)
 
+@app.route("/logout")
+def logout():
+    session.pop("username", None) #session.pop("username", None) removes the username from the session. The None is there so that it doesn't crash if it isn't there
+    return redirect(url_for("home")) #sends the player back to the game
+
 if __name__ == "__main__":
     app.run(debug=True)

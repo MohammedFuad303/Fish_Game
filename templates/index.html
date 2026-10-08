@@ -6,10 +6,10 @@
 <body>
     <h1>Fish Game</h1>
 
-    {% if username %}
-    <p>Logged in as <strong>{{ username }}</strong></p>
-    {% else %}
-    <p><a href="/register">Register</a> | <a href="/login">Login</a></p>
+    {% if username %}  <!-- If there is a username-->
+    <p>Logged in as <strong>{{ username }}</strong> | <a href="/logout">Logout</a></p> <!-- show this line-->
+    {% else %} <!-- otherwise-->
+    <p><a href="/register">Register</a> | <a href="/login">Login</a></p> <!-- show this line-->
     {% endif %}
 
     <p>Count the fish and the chests:</p>
