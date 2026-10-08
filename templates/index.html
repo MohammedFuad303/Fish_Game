@@ -6,15 +6,17 @@
 <body>
     <h1>Fish Game</h1>
 
+    {% if username %}
+    <p>Logged in as <strong>{{ username }}</strong></p>
+    {% else %}
     <p><a href="/register">Register</a> | <a href="/login">Login</a></p>
+    {% endif %}
 
     <p>Count the fish and the chests:</p>
     
     <img src="{{ image_url }}" width="500">
 
-    {% if message %}
-        <p><strong>{{ message }}</strong></p>
-    {% endif %}
+
 
     <form method="post" action="/guess">
         Fish: <input type="number" name="fish">

@@ -31,8 +31,9 @@ def home():
                            score=session.get("score", 0),
                            rounds=session.get("rounds", 0),
                            visits=session["visits"],
+                           username=session.get("username"), 
                            message=message)
-
+#session.get()"username") gives the name if somebody is logged in, or None if nobody is logged in
 
 @app.route("/guess", methods=["POST"])
 def guess():
@@ -87,7 +88,8 @@ def login():
         stored_hash = storage.get_password_hash(username)
 
         if stored_hash is not None and check_password_hash(stored_hash, password):
-            message = "Login successful"
+            session["username"] = username  #stores who logged in
+            return redirect(url_for("home"))  #sends back to the home page
         else:
             message = "Wrong username or password"
     return render_template("login.html", message=message)
