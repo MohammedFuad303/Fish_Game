@@ -6,6 +6,7 @@ DB_FILE = "fish_game.db"
 def create_tables():
     conn = sqlite3.connect(DB_FILE)
     conn.execute("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password_hash TEXT NOT NULL)")
+    conn.execute("CREATE TABLE IF NOT EXISTS scores (username TEXT PRIMARY KEY, score INTEGER NOT NULL, rounds INTEGER NOT NULL)") #username primary key, so each player has exactly one row
     conn.commit()
     conn.close()
 
