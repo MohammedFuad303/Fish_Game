@@ -10,6 +10,18 @@ def create_tables():
     conn.close()
 
 
+def add_user(username, password_hash):
+    conn = sqlite3.connect(DB_FILE)
+    try:
+        conn.execute("INSERT INTO users VALUES (?, ?)", (username, password_hash))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     create_tables()
-    print("Database ready")
+    
+    print(add_user("test4", "fakehash")) 
