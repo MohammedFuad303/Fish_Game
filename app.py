@@ -2,12 +2,13 @@ import uuid
 from flask import Flask, render_template, session, request, redirect, url_for
 import api_client
 import game_logic
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-change-later"
 
-games = {}   # game_id -> the correct answer, kept on the server only
-
+games = {}  
+users = {}   
 
 @app.route("/")
 def home():
@@ -54,7 +55,23 @@ def guess():
         return f"Wrong. It was {answer['fish']} fish and {answer['chest']} chests. <a href='/'>Next puzzle</a>"     
 
 
+@app.route("/register", methods = ["GET", "POST"])
+def register():
+    message = ""
 
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        password = request.form["password"]
+
+        if username == "" or password == "":
+            message = "Please fill in both boxes"
+        elif username in users:
+            message = "That username is taken"
+        else:
+            users[username] = generate_password_hash(password)
+            print("Users stored:", users)
+            message = "Account Created!"
+    return render_template("register.html", message=message)
 
 if __name__ == "__main__":
     app.run(debug=True)
