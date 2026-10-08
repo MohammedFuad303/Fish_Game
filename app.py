@@ -3,12 +3,14 @@ from flask import Flask, render_template, session, request, redirect, url_for
 import api_client
 import game_logic
 from werkzeug.security import generate_password_hash, check_password_hash
+import storage
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-change-later"
+storage.create_tables()
 
 games = {}  
-users = {}   
+#users = {}   
 
 @app.route("/")
 def home():
@@ -65,12 +67,12 @@ def register():
 
         if username == "" or password == "":
             message = "Please fill in both boxes"
-        elif username in users:
-            message = "That username is taken"
         else:
-            users[username] = generate_password_hash(password)
-            print("Users stored:", users)
-            message = "Account Created!"
+            saved = storage.add_user(username, generate_password_hash(password))
+            if saved:
+                message = "Account created!"
+            else:
+                message = "The username is already taken."
     return render_template("register.html", message=message)
 
 if __name__ == "__main__":
