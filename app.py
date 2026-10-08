@@ -75,5 +75,22 @@ def register():
                 message = "The username is already taken."
     return render_template("register.html", message=message)
 
+
+@app.route("/login", methods = ["GET", "POST"])
+def login():
+    message = ""
+
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        password = request.form["password"]
+
+        stored_hash = storage.get_password_hash(username)
+
+        if stored_hash is not None and check_password_hash(stored_hash, password):
+            message = "Login successful"
+        else:
+            message = "Wrong username or password"
+    return render_template("login.html", message=message)
+
 if __name__ == "__main__":
     app.run(debug=True)
