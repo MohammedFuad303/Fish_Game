@@ -38,10 +38,19 @@ def save_score(username, score, rounds):
     conn.close()
 # INSERT OR REPLACE adds a new row, or overwrites the existing one if that username alrewady has a row
 # The three placehoulders ? are filled with (username, score, rounds), in the same order as the columns in the table
-  
+
+
+def get_score(username):
+    conn = sqlite3.connect(DB_FILE)
+    row = conn.execute("SELECT score, rounds FROM scores WHERE username =?", (username,)).fetchone() #asks for two columns, so row holds two values
+    conn.close()
+
+    if row is None:
+        return 0, 0       #If the player has no row yet, it returns [0, 0] so anew player simply starts from zero
+    return row[0], row[1] #row[0]is the score, row[1] is the rounds
 
 
 if __name__ == "__main__":
     create_tables()
-    save_score("fuad2",3, 5)
-    print("Score saved")
+    print(get_score("fuad2"))
+    print(get_score("nobody"))
