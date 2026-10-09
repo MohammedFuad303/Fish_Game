@@ -100,6 +100,9 @@ def login():
 
         if stored_hash is not None and check_password_hash(stored_hash, password):
             session["username"] = username  #stores who logged in
+            score, rounds = storage.get_score(username) #storage.get_score(username) returns two values and score, rounds= unpacks them into two variables
+            session["score"] = score
+            session["rounds"] = rounds
             return redirect(url_for("home"))  #sends back to the home page
         else:
             message = "Wrong username or password"
@@ -108,6 +111,8 @@ def login():
 @app.route("/logout")
 def logout():
     session.pop("username", None) #session.pop("username", None) removes the username from the session. The None is there so that it doesn't crash if it isn't there
+    session.pop("score", None)
+    session.pop("rounds", None)
     return redirect(url_for("home")) #sends the player back to the game
 
 if __name__ == "__main__":
