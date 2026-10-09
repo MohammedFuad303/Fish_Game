@@ -51,11 +51,22 @@ def guess():
 
     session["rounds"] = session.get("rounds", 0) + 1
 
-    if game_logic.check_answer(answer, fish, chest):
-            session["score"] = session.get("score", 0) + 1
-            return "Correct! <a href='/'>Next puzzle</a>"
-    else:
-        return f"Wrong. It was {answer['fish']} fish and {answer['chest']} chests. <a href='/'>Next puzzle</a>"     
+    correct = game_logic.check_answer(answer, fish, chest)
+    if correct:
+        session["score"] = session.get("score", 0) + 1
+
+    if session.get("username"):
+        storage.save_score(session["username"], session.get("score", 0), session["rounds"])
+
+    if correct:
+        return "Correct! <a href='/'>Next puzzzle</a>"
+    return f"Wrong. It was {answer['fish']} fish and {answer['chest']} chests. <a href='/'>Next puzzle</a>" 
+
+    #if game_logic.check_answer(answer, fish, chest):
+            #session["score"] = session.get("score", 0) + 1
+            #return "Correct! <a href='/'>Next puzzle</a>"
+    #else:
+        #return f"Wrong. It was {answer['fish']} fish and {answer['chest']} chests. <a href='/'>Next puzzle</a>"     
 
 
 @app.route("/register", methods = ["GET", "POST"])

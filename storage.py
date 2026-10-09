@@ -53,4 +53,3 @@ def get_score(username):
 if __name__ == "__main__":
     create_tables()
     print(get_score("fuad2"))
-    print(get_score("nobody"))
