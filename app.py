@@ -115,5 +115,13 @@ def logout():
     session.pop("rounds", None)
     return redirect(url_for("home")) #sends the player back to the game
 
+
+@app.route("/leaderboard")
+def leaderboard():
+    rows = storage.get_top_scores(5)
+    return render_template("leaderboard.html", rows=rows)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

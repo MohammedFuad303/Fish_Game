@@ -50,6 +50,20 @@ def get_score(username):
     return row[0], row[1] #row[0]is the score, row[1] is the rounds
 
 
+def get_top_scores(limit=5):
+    conn = sqlite3.connect(DB_FILE)
+    rows = conn.execute("SELECT username, score, rounds FROM scores ORDER BY score DESC LIMIT ?", (limit,)).fetchall()
+    conn.close()
+    return rows
+#ORDER BY score DESC sorts the rows from the highest score to the lowest (DESC means descending).
+#LIMIT ? returns only the first few rows, 5 by default.
+#fetchall() returns all the matching rows as a list, where fetchone() returned just one.
+#Each row is a group of three values: username, score and rounds.
+#limit=5 is a default value. Calling get_top_scores() uses 5, and get_top_scores(10) would use 10.
+
+
 if __name__ == "__main__":
     create_tables()
-    print(get_score("fuad2"))
+    save_score("testa", 10, 12)
+    save_score("testb", 2, 3)
+    print(get_top_scores())
