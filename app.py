@@ -32,6 +32,7 @@ def home():
                            rounds=session.get("rounds", 0),
                            visits=session["visits"],
                            username=session.get("username"), 
+                           is_admin=storage.is_admin(session.get("username")),
                            message=message)
 #session.get()"username") gives the name if somebody is logged in, or None if nobody is logged in
 
