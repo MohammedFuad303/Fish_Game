@@ -80,9 +80,13 @@ def is_admin(username):
 #SELECT 1 ... WHERE username = ? only checks whether a matching row exists. We don’t need its contents.
 #return row is not None gives True if a row was found and False if not. You used is not None earlier, in the API check.
 
+def get_all_usernames():
+    conn = sqlite3.connect(DB_FILE)
+    rows = conn.execute("SELECT username FROM users ORDER BY username").fetchall()
+    conn.close()
+    return [row[0] for row in rows]
+
 
 if __name__ == "__main__":
     create_tables()
-    make_admin("fuad2")
-    print(is_admin("fuad2"))
-    print(is_admin("testa"))
+    print(get_all_usernames())
