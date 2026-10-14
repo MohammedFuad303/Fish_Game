@@ -1,12 +1,16 @@
 import uuid
+import os
 from flask import Flask, render_template, session, request, redirect, url_for
 import api_client
 import game_logic
 from werkzeug.security import generate_password_hash, check_password_hash
 import storage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "dev-secret-change-later"
+app.secret_key = os.environ.get("FISH_SECRET_KEY", "dev-secret-change-later")
 storage.create_tables()
 
 games = {}  
