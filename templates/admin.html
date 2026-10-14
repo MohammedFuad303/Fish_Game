@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>  
+        <title>Admin</title>
+    </head>
+
+    <body>
+        <h1>Admin Page</h1>
+        <p>Logged in as admin <strong>{{ username }}</strong></p>
+
+        <h2>Registered users ({{ users|length }})</h2>
+
+        <ul>
+            {% for user in users %}
+                <li>{{ user }}</li>
+            {% endfor %}
+        </ul>
+
+        <p><a href="/">Back to the game</a></p>
+    </body>
+</html>
