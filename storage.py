@@ -7,6 +7,7 @@ def create_tables():
     conn = sqlite3.connect(DB_FILE)
     conn.execute("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password_hash TEXT NOT NULL)")
     conn.execute("CREATE TABLE IF NOT EXISTS scores (username TEXT PRIMARY KEY, score INTEGER NOT NULL, rounds INTEGER NOT NULL)") #username primary key, so each player has exactly one row
+    conn.execute("CREATE TABLE IF NOT EXISTS admins (username TEXT PRIIMARY KEY)")
     conn.commit() #saves to disk
     conn.close() #closes the file
 
@@ -62,8 +63,26 @@ def get_top_scores(limit=5):
 #limit=5 is a default value. Calling get_top_scores() uses 5, and get_top_scores(10) would use 10.
 
 
+def make_admin(username):
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute("INSERT OR IGNORE INTO admins VALUES (?)", (username,))
+    conn.commit()
+    conn.close()
+
+
+def is_admin(username):
+    conn = sqlite3.connect(DB_FILE)
+    row = conn.execute("SELECT 1 FROM admins WHERE username = ?", (username,)).fetchone()
+    conn.close()
+    return row is not None
+#The admins table has one column, username. If a name is in the table, that user is an admin.
+#INSERT OR IGNORE adds the name, and does nothing if it’s already there, so running it twice is safe.
+#SELECT 1 ... WHERE username = ? only checks whether a matching row exists. We don’t need its contents.
+#return row is not None gives True if a row was found and False if not. You used is not None earlier, in the API check.
+
+
 if __name__ == "__main__":
     create_tables()
-    save_score("testa", 10, 12)
-    save_score("testb", 2, 3)
-    print(get_top_scores())
+    make_admin("fuad2")
+    print(is_admin("fuad2"))
+    print(is_admin("testa"))
