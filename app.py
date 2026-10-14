@@ -122,6 +122,14 @@ def leaderboard():
     return render_template("leaderboard.html", rows=rows)
 
 
+@app.route("/admin")
+def admin():
+    username = session.get("username")
+
+    if not username or not storage.is_admin(username):
+        return "Not allowed. <a href='/'>Back to the game</a>", 403
+
+    return f"Welcome, admin {username}! <a href='/'>Back to the game</a>"
 
 if __name__ == "__main__":
     app.run(debug=True)
