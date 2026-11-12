@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FISH_SECRET_KEY", "dev-secret-change-later")
+app.secret_key = os.environ.get("FISH_SECRET_KEY", "default_secret_key")  # Use a default secret key if not set in environment variables
 storage.create_tables()
 
 games = {}  
