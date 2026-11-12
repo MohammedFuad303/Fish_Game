@@ -2,7 +2,7 @@ import sqlite3
 
 DB_FILE = "fish_game.db"
 
-
+# A function which creates the users, scores and admins tables if they don’t exist yet
 def create_tables():
     conn = sqlite3.connect(DB_FILE)
     conn.execute("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password_hash TEXT NOT NULL)")
@@ -12,6 +12,7 @@ def create_tables():
     conn.close() #closes the file
 
 
+# A function which saves a new user, and returns False if the username is taken
 def add_user(username, password_hash):
     conn = sqlite3.connect(DB_FILE)
     try:
@@ -23,6 +24,7 @@ def add_user(username, password_hash):
     finally:
         conn.close()
 
+#  function which returns the stored hash for a user, or None if there’s no such user
 def get_password_hash(username):
     conn = sqlite3.connect(DB_FILE)
     row = conn.execute("SELECT password_hash FROM users WHERE username = ?", (username,)).fetchone()
@@ -32,54 +34,48 @@ def get_password_hash(username):
     return row[0]
 
 
+# a function which saves or overwrites a player’s score row
 def save_score(username, score, rounds):
     conn = sqlite3.connect(DB_FILE)
     conn.execute("INSERT or REPLACE INTO scores VALUES (?, ?, ?)",(username, score, rounds))
     conn.commit()
     conn.close()
-# INSERT OR REPLACE adds a new row, or overwrites the existing one if that username alrewady has a row
-# The three placehoulders ? are filled with (username, score, rounds), in the same order as the columns in the table
 
 
+# A function which returns a player’s saved score and rounds, or (0, 0) for a new player
 def get_score(username):
     conn = sqlite3.connect(DB_FILE)
-    row = conn.execute("SELECT score, rounds FROM scores WHERE username =?", (username,)).fetchone() #asks for two columns, so row holds two values
+    row = conn.execute("SELECT score, rounds FROM scores WHERE username =?", (username,)).fetchone() 
     conn.close()
 
     if row is None:
-        return 0, 0       #If the player has no row yet, it returns [0, 0] so anew player simply starts from zero
-    return row[0], row[1] #row[0]is the score, row[1] is the rounds
+        return 0, 0       
+    return row[0], row[1] 
 
 
+# A function which returns the highest scores, best first
 def get_top_scores(limit=5):
     conn = sqlite3.connect(DB_FILE)
     rows = conn.execute("SELECT username, score, rounds FROM scores ORDER BY score DESC LIMIT ?", (limit,)).fetchall()
     conn.close()
     return rows
-#ORDER BY score DESC sorts the rows from the highest score to the lowest (DESC means descending).
-#LIMIT ? returns only the first few rows, 5 by default.
-#fetchall() returns all the matching rows as a list, where fetchone() returned just one.
-#Each row is a group of three values: username, score and rounds.
-#limit=5 is a default value. Calling get_top_scores() uses 5, and get_top_scores(10) would use 10.
 
 
+# A function which adds a user to the admins table
 def make_admin(username):
     conn = sqlite3.connect(DB_FILE)
     conn.execute("INSERT OR IGNORE INTO admins VALUES (?)", (username,))
     conn.commit()
     conn.close()
 
-
+# A function which checks if a user is an admin
 def is_admin(username):
     conn = sqlite3.connect(DB_FILE)
     row = conn.execute("SELECT 1 FROM admins WHERE username = ?", (username,)).fetchone()
     conn.close()
     return row is not None
-#The admins table has one column, username. If a name is in the table, that user is an admin.
-#INSERT OR IGNORE adds the name, and does nothing if it’s already there, so running it twice is safe.
-#SELECT 1 ... WHERE username = ? only checks whether a matching row exists. We don’t need its contents.
-#return row is not None gives True if a row was found and False if not. You used is not None earlier, in the API check.
 
+# A function which returns a list of all registered usernames
 def get_all_usernames():
     conn = sqlite3.connect(DB_FILE)
     rows = conn.execute("SELECT username FROM users ORDER BY username").fetchall()

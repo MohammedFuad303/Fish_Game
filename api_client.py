@@ -2,7 +2,8 @@ import requests
 
 url = "http://marcconrad.com/uob/fish/api.php"
 
-
+# A function to fetch the puzzle data from the API and 
+# returns a dictionary containing the image URL, fish count, and chest count
 def solve_puzzle():
 
     response = requests.get(url)
@@ -16,15 +17,11 @@ def solve_puzzle():
         }
     else:
         return None
+
+
 if __name__ == "__main__":        
     puzzle = solve_puzzle()
     print(puzzle)
 
     if puzzle is not None:
         print("Fish:", puzzle["fish"])
-    # Optional: Download the puzzle image to disk
-    #img_response = requests.get(image_url)
-    #if img_response.status_code == 200:
-    #    with open("puzzle.png", "wb") as f:
-    #        f.write(img_response.content)
-    #    print("Downloaded puzzle.png successfully!")

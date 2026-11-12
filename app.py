@@ -16,6 +16,9 @@ storage.create_tables()
 games = {}  
 #users = {}   
 
+
+# A function which counts visits, fetches a puzzle,
+# stores its answer on the server under a random game ID, and shows the page
 @app.route("/")
 def home():
     session["visits"] = session.get("visits", 0) + 1
@@ -38,8 +41,11 @@ def home():
                            username=session.get("username"), 
                            is_admin=storage.is_admin(session.get("username")),
                            message=message)
-#session.get()"username") gives the name if somebody is logged in, or None if nobody is logged in
 
+
+
+# A function which reads the submitted guess, checks it against the stored answer,
+# updates score and rounds in the session, and saves them to the database for logged-in players
 @app.route("/guess", methods=["POST"])
 def guess():
 
@@ -67,13 +73,9 @@ def guess():
         return "Correct! <a href='/'>Next puzzzle</a>"
     return f"Wrong. It was {answer['fish']} fish and {answer['chest']} chests. <a href='/'>Next puzzle</a>" 
 
-    #if game_logic.check_answer(answer, fish, chest):
-            #session["score"] = session.get("score", 0) + 1
-            #return "Correct! <a href='/'>Next puzzle</a>"
-    #else:
-        #return f"Wrong. It was {answer['fish']} fish and {answer['chest']} chests. <a href='/'>Next puzzle</a>"     
 
 
+# A function which shows the sign-up form, hashes the password and saves the new user
 @app.route("/register", methods = ["GET", "POST"])
 def register():
     message = ""
@@ -93,6 +95,8 @@ def register():
     return render_template("register.html", message=message)
 
 
+# A function which checks the password against the stored hash, 
+# remembers the user in the session, and loads their saved score
 @app.route("/login", methods = ["GET", "POST"])
 def login():
     message = ""
@@ -105,7 +109,7 @@ def login():
 
         if stored_hash is not None and check_password_hash(stored_hash, password):
             session["username"] = username  #stores who logged in
-            score, rounds = storage.get_score(username) #storage.get_score(username) returns two values and score, rounds= unpacks them into two variables
+            score, rounds = storage.get_score(username) 
             session["score"] = score
             session["rounds"] = rounds
             return redirect(url_for("home"))  #sends back to the home page
@@ -113,20 +117,25 @@ def login():
             message = "Wrong username or password"
     return render_template("login.html", message=message)
 
+
+# A function which removes the username, score and rounds from the session
 @app.route("/logout")
 def logout():
-    session.pop("username", None) #session.pop("username", None) removes the username from the session. The None is there so that it doesn't crash if it isn't there
+    session.pop("username", None) 
     session.pop("score", None)
     session.pop("rounds", None)
     return redirect(url_for("home")) #sends the player back to the game
 
 
+# A function which fetches the top scores and shows them in a table
 @app.route("/leaderboard")
 def leaderboard():
     rows = storage.get_top_scores(5)
     return render_template("leaderboard.html", rows=rows)
 
 
+# A function which refuses anyone who isn’t an admin, 
+# and otherwise lists all registered usernames
 @app.route("/admin")
 def admin():
     username = session.get("username")
